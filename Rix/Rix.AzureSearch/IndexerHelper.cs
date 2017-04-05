@@ -90,7 +90,7 @@ namespace Rix.AzureSearch
 				var indexActions = ids
 					.Skip(i * maxBatchSize)
 					.Take(maxBatchSize)
-					.Select(x => IndexAction.Delete("id", x));
+					.Select(x => IndexAction.Delete(nameof(IndexDocument.Id), x));
 
 				await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.IndexAsync(new IndexBatch(indexActions));
 			}
@@ -100,7 +100,5 @@ namespace Rix.AzureSearch
 		{
 			await ServiceClient.Indexers.RunAsync(ConfigurationReader.SearchIndexerName);
 		}
-
-        
 	}
 }

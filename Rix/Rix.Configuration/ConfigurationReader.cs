@@ -7,11 +7,11 @@
 		public static readonly string SearchDataSourceName = "";
 		public static readonly string SearchIndexName = "";
 		public static readonly string SearchIndexerName = "";
+		public static readonly string[] SearchIndexerExtensions = new string[] { };
 
 		public static readonly string SearchFieldContentName = "";
 
 		public static readonly string BlobStorageConnectionString = "";
 		public static readonly string BlobStorageContainerName = "";
-
 	}
 }

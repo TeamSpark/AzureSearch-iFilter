@@ -56,6 +56,9 @@ namespace Rix.AzureSearch
 			indexer.TargetIndexName = definition.Name;
 			indexer.Parameters = new IndexingParameters();
 			indexer.Parameters.DoNotFailOnUnsupportedContentType();
+			indexer.Parameters.IndexFileNameExtensions(ConfigurationReader.SearchIndexerExtensions);
+			indexer.Parameters.MaxFailedItems = - 1;
+			indexer.Parameters.MaxFailedItemsPerBatch = -1;
 			indexer.FieldMappings = new List<FieldMapping>();
 			indexer.FieldMappings.Add(fieldMappingContent);
 			indexer.FieldMappings.Add(fieldMappingId);

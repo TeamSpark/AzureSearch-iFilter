@@ -21,7 +21,7 @@ namespace Rix.AzureSearch
 		{
             var definition = new Index()
             {
-                Name = "indexDocument",
+                Name = ConfigurationReader.SearchIndexName,
                 Fields = FieldBuilder.BuildForType<IndexDocument>()
             };
 
@@ -68,8 +68,8 @@ namespace Rix.AzureSearch
 
 		public async Task<List<IndexDocument>> GetDocumentsAsync()
 		{
-            ISearchIndexClient indexClient = ServiceClient.Indexes.GetClient("indexDocument");
-            var result = indexClient.Documents.Search<IndexDocument>("*", new SearchParameters() { Select = new[] { "id", "content" } }).Results.ToList();
+            ISearchIndexClient indexClient = ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName);
+            var result = indexClient.Documents.Search<IndexDocument>("*").Results.ToList();
             return (from g in result select g.Document).ToList();
 		}
 

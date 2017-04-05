@@ -69,8 +69,7 @@ namespace Rix.AzureSearch
 		public async Task<List<IndexDocument>> GetDocumentsAsync()
 		{
             ISearchIndexClient indexClient = ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName);
-            var result = indexClient.Documents.Search<IndexDocument>("*").Results.ToList();
-            return (from g in result select g.Document).ToList();
+            return (await indexClient.Documents.SearchAsync<IndexDocument>("*")).Results.Select(x => x.Document).ToList();
 		}
 
 		public async Task DeleteDocumentsByIdsAsync(List<string> ids)

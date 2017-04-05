@@ -66,21 +66,11 @@ namespace Rix.AzureSearch
 			await ServiceClient.Indexers.CreateOrUpdateAsync(indexer);
 		}
 
-		public async Task<List<KeyValuePair<string, string>>> GetDocumentsAsync()
+		public async Task<List<IndexDocument>> GetDocumentsAsync()
 		{
-			var searchResults = await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.SearchAsync("*");
-
-			var results = new List<KeyValuePair<string, string>>();
-
-			foreach (var document in searchResults.Results.Select(x => x.Document))
-			{
-				var id = document.Single(x => x.Key == "id").Value.ToString();
-				var content = document.Single(x => x.Key == "content").Value.ToString();
-
-				results.Add(new KeyValuePair<string, string>(id, content));
-			}
-
-			return results;
+            ISearchIndexClient indexClient = ServiceClient.Indexes.GetClient("indexDocument");
+            var result = indexClient.Documents.Search<IndexDocument>("*", new SearchParameters() { Select = new[] { "id", "content" } }).Results.ToList();
+            return (from g in result select g.Document).ToList();
 		}
 
 		public async Task DeleteDocumentsByIdsAsync(List<string> ids)

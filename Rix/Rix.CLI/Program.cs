@@ -52,17 +52,22 @@ namespace Rix.CLI
 
 			//Console.WriteLine("Indexer updated!");
 
-			//var task7 = Task.Run(async () => await indexerHelper.GetDocumentsCountAsync());
-			//task7.Wait();
+			var task7 = Task.Run(async () => await indexerHelper.GetDocumentsAsync());
+			task7.Wait();
 
-			//Console.WriteLine("Documents retreaved!");
+			Console.WriteLine("Documents retreaved!");
 
-			//i = 0;
-			//foreach (var val in task7.Result)
-			//{
-			//	Console.WriteLine("{0}. {1}", i++, val);
-			//}
+			foreach (var val in task7.Result)
+			{
+				Console.WriteLine(val.Id);
+				Console.WriteLine(val.Content);
+				Console.WriteLine();
+			}
 
+			var task8 = Task.Run(async() => { await indexerHelper.DeleteDocumentsByIdsAsync(task7.Result.Select(x => x.Id).ToList()); });
+			task8.Wait();
+
+			Console.WriteLine("Documents deleted!");
 
 			Console.WriteLine("Press 'enter' to quit");
 			Console.ReadLine();

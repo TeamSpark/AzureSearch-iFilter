@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rix.AzureSearch
 {
-	public class IndexerHelper
+    using SearchStringType = Microsoft.Azure.Search.Models.DataType;
+    public class IndexerHelper
 	{
 		protected readonly SearchServiceClient ServiceClient;
 
@@ -19,7 +21,7 @@ namespace Rix.AzureSearch
 
 		public async Task EnsureIndexerCreatedAsync()
 		{
-			var fieldIndex = new Field();
+            var fieldIndex = new Field();
 			fieldIndex.IsFacetable = false;
 			fieldIndex.IsFilterable = false;
 			fieldIndex.IsKey = true;
@@ -27,7 +29,7 @@ namespace Rix.AzureSearch
 			fieldIndex.IsSearchable = false;
 			fieldIndex.IsSortable = false;
 			fieldIndex.Name = "id";
-			fieldIndex.Type = DataType.String;
+			fieldIndex.Type = SearchStringType.String;
 
 			var fieldContent = new Field();
 			fieldContent.IsFacetable = false;
@@ -37,7 +39,7 @@ namespace Rix.AzureSearch
 			fieldContent.IsSearchable = false;
 			fieldContent.IsSortable = false;
 			fieldContent.Name = ConfigurationReader.SearchFieldContentName;
-			fieldContent.Type = DataType.String;
+			fieldContent.Type = SearchStringType.String;
 
 			var index = new Index();
 			index.Name = ConfigurationReader.SearchIndexName;
@@ -106,5 +108,15 @@ namespace Rix.AzureSearch
 		{
 			await ServiceClient.Indexers.RunAsync(ConfigurationReader.SearchIndexerName);
 		}
+
+        [SerializePropertyNamesAsCamelCase]
+        public class IndexDocument
+        {
+            [Key]
+            [IsRetrievable(true)]
+            public string id { get; set; }
+            [IsRetrievable(true)]
+            public string content { get; set; }
+        }
 	}
 }

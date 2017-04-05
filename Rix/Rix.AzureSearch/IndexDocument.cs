@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Rix.AzureSearch
 {
-    [SerializePropertyNamesAsCamelCase]
     public class IndexDocument
     {
         [Key]

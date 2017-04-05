@@ -83,10 +83,21 @@ namespace Rix.AzureSearch
 			await ServiceClient.Indexers.CreateOrUpdateAsync(indexer);
 		}
 
-		public async Task<List<object>> GetDocumentsCountAsync()
+		public async Task<List<KeyValuePair<string, string>>> GetDocuments()
 		{
 			var searchResults = await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.SearchAsync("*");
-			return searchResults.Results.SelectMany(x => x.Document.Where(y => y.Key == "id").Select(y => y.Value)).ToList();
+
+			var results = new List<KeyValuePair<string, string>>();
+
+			foreach (var document in searchResults.Results.Select(x => x.Document))
+			{
+				var id = document.Single(x => x.Key == "id").Value.ToString();
+				var content = document.Single(x => x.Key == "content").Value.ToString();
+
+				results.Add(new KeyValuePair<string, string>(id, content));
+			}
+
+			return results;
 		}
 
 		public async Task DeleteDocumentsByIdAsync(List<string> ids)

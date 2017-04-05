@@ -81,27 +81,42 @@ namespace Rix.AzureSearch
 			indexer.FieldMappings = new List<FieldMapping>();
 			indexer.FieldMappings.Add(fieldMappingContent);
 			indexer.FieldMappings.Add(fieldMappingId);
+			indexer.Schedule = new IndexingSchedule(TimeSpan.FromMinutes(5));
 
 			await ServiceClient.Indexers.CreateOrUpdateAsync(indexer);
 		}
 
-		public async Task<List<object>> GetDocumentsCountAsync()
+		public async Task<List<KeyValuePair<string, string>>> GetDocumentsAsync()
 		{
 			var searchResults = await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.SearchAsync("*");
-			return searchResults.Results.SelectMany(x => x.Document.Where(y => y.Key == "id").Select(y => y.Value)).ToList();
+
+			var results = new List<KeyValuePair<string, string>>();
+
+			foreach (var document in searchResults.Results.Select(x => x.Document))
+			{
+				var id = document.Single(x => x.Key == "id").Value.ToString();
+				var content = document.Single(x => x.Key == "content").Value.ToString();
+
+				results.Add(new KeyValuePair<string, string>(id, content));
+			}
+
+			return results;
 		}
 
-		public async Task DeleteDocumentsByIdAsync(List<string> ids)
+		public async Task DeleteDocumentsByIdsAsync(List<string> ids)
 		{
-			throw new NotImplementedException();
+			int maxBatchSize = 1000;
+			int pagesCount = (ids.Count / maxBatchSize) + (ids.Count % maxBatchSize > 0 ? 1 : 0);
 
-			//var maxBatchSize = 1000;
-			//var pagesCount = ids.Count % maxBatchSize;
+			for (var i = 0; i < pagesCount; i++)
+			{
+				var indexActions = ids
+					.Skip(i * maxBatchSize)
+					.Take(maxBatchSize)
+					.Select(x => IndexAction.Delete("id", x));
 
-			//var indexActions = new List<IndexAction>();
-			//indexActions.Add(IndexAction.Delete("id", id));
-
-			//await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.IndexAsync(new IndexBatch(indexActions));
+				await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.IndexAsync(new IndexBatch(indexActions));
+			}
 		}
 
 		public async Task RunIndexerAsync()

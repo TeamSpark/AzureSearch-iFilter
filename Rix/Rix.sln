@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rix.WebJobCopy", "Rix.WebJobCopy\Rix.WebJobCopy.csproj", "{D6280176-B5B8-4B0F-B5FB-56E2750FE3CF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rix.WebJobSql", "Rix.WebJobSql\Rix.WebJobSql.csproj", "{3DBADA2D-2172-40DA-A8AE-C54868A6B55B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rix.AzureSearch", "Rix.AzureSearch\Rix.AzureSearch.csproj", "{AF346FC0-F7CF-4C78-AA9C-E8ED266BCBD3}"
@@ -13,16 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rix.AzureStorage", "Rix.Azu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rix.Configuration", "Rix.Configuration\Rix.Configuration.csproj", "{950EB969-B4C1-43D3-B4F0-F015C4AAB0A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rix.CLI", "Rix.CLI\Rix.CLI.csproj", "{49CDCDE0-427A-436A-9F2B-4CEAF29AE8CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6280176-B5B8-4B0F-B5FB-56E2750FE3CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6280176-B5B8-4B0F-B5FB-56E2750FE3CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6280176-B5B8-4B0F-B5FB-56E2750FE3CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6280176-B5B8-4B0F-B5FB-56E2750FE3CF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3DBADA2D-2172-40DA-A8AE-C54868A6B55B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3DBADA2D-2172-40DA-A8AE-C54868A6B55B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DBADA2D-2172-40DA-A8AE-C54868A6B55B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{950EB969-B4C1-43D3-B4F0-F015C4AAB0A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{950EB969-B4C1-43D3-B4F0-F015C4AAB0A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{950EB969-B4C1-43D3-B4F0-F015C4AAB0A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49CDCDE0-427A-436A-9F2B-4CEAF29AE8CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49CDCDE0-427A-436A-9F2B-4CEAF29AE8CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49CDCDE0-427A-436A-9F2B-4CEAF29AE8CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49CDCDE0-427A-436A-9F2B-4CEAF29AE8CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

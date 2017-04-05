@@ -8,11 +8,10 @@
 		public static readonly string SearchIndexName = "";
 		public static readonly string SearchIndexerName = "";
 
-		public static readonly string SearchFieldContentName = "content";
+		public static readonly string SearchFieldContentName = "";
 
-		public static readonly string BlobStorageMainConnectionString = "";
-		public static readonly string BlobStorageCopyConnectionString = "";
-		public static readonly string BlobStorageCopyContainerName = "";
+		public static readonly string BlobStorageConnectionString = "";
+		public static readonly string BlobStorageContainerName = "";
 
 	}
 }

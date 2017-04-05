@@ -79,6 +79,7 @@ namespace Rix.AzureSearch
 			indexer.FieldMappings = new List<FieldMapping>();
 			indexer.FieldMappings.Add(fieldMappingContent);
 			indexer.FieldMappings.Add(fieldMappingId);
+			indexer.Schedule = new IndexingSchedule(TimeSpan.FromMinutes(5));
 
 			await ServiceClient.Indexers.CreateOrUpdateAsync(indexer);
 		}
@@ -100,17 +101,20 @@ namespace Rix.AzureSearch
 			return results;
 		}
 
-		public async Task DeleteDocumentsByIdAsync(List<string> ids)
+		public async Task DeleteDocumentsByIdsAsync(List<string> ids)
 		{
-			throw new NotImplementedException();
+			int maxBatchSize = 1000;
+			int pagesCount = (ids.Count / maxBatchSize) + (ids.Count % maxBatchSize > 0 ? 1 : 0);
 
-			//var maxBatchSize = 1000;
-			//var pagesCount = ids.Count % maxBatchSize;
+			for (var i = 0; i < pagesCount; i++)
+			{
+				var indexActions = ids
+					.Skip(i * maxBatchSize)
+					.Take(maxBatchSize)
+					.Select(x => IndexAction.Delete("id", x));
 
-			//var indexActions = new List<IndexAction>();
-			//indexActions.Add(IndexAction.Delete("id", id));
-
-			//await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.IndexAsync(new IndexBatch(indexActions));
+				await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.IndexAsync(new IndexBatch(indexActions));
+			}
 		}
 
 		public async Task RunIndexerAsync()

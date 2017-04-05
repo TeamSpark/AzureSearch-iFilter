@@ -47,7 +47,7 @@
     "dashboardType": "Standard_LRS",
     "documentsType": "Standard_GRS",
     "dbName": "namtst",
-    "dbCollation": "SQL_Latvian_CI_AI",
+    "dbCollation": "Latvian_CI_AI",
     "dbEdition": "Standard",
     "searchName": "[concat('search', uniqueString(resourceGroup().id))]"
   },

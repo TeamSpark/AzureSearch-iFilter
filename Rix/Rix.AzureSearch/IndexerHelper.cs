@@ -83,7 +83,7 @@ namespace Rix.AzureSearch
 			await ServiceClient.Indexers.CreateOrUpdateAsync(indexer);
 		}
 
-		public async Task<List<KeyValuePair<string, string>>> GetDocuments()
+		public async Task<List<KeyValuePair<string, string>>> GetDocumentsAsync()
 		{
 			var searchResults = await ServiceClient.Indexes.GetClient(ConfigurationReader.SearchIndexName).Documents.SearchAsync("*");
 

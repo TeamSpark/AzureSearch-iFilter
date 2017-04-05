@@ -13,9 +13,7 @@ namespace Rix.AzureSearch
     public class IndexDocument
     {
         [Key]
-        [IsRetrievable(true)]
         public string Id { get; set; }
-        [IsRetrievable(true)]
         public string Content { get; set; }
     }
 }

@@ -1,0 +1,227 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webFarmSkuName": {
+      "type": "string",
+      "defaultValue": "B2",
+      "allowedValues": [
+        "B2",
+        "B3",
+        "S2",
+        "S3",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Minimun 2 cores"
+      }
+    },
+    "dbserverAdminLogin": {
+      "type": "string",
+      "minLength": 6
+    },
+    "dbserverAdminLoginPassword": {
+      "type": "securestring",
+      "minLength": 6
+    },
+    "dbRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "S0",
+      "allowedValues": [
+        "S0",
+        "S1",
+        "S2"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    }},
+  "variables": {
+    "webFarmName": "[concat('webFarm', uniqueString(resourceGroup().id))]",
+    "webApiName": "[concat('webApi', uniqueString(resourceGroup().id))]",
+    "documentsName": "[concat('documents', uniqueString(resourceGroup().id))]",
+    "dashboardName": "[concat('dashboard', uniqueString(resourceGroup().id))]",
+    "dbserverName": "[concat('dbserver', uniqueString(resourceGroup().id))]",
+    "dashboardType": "Standard_LRS",
+    "documentsType": "Standard_GRS",
+    "dbName": "namtst",
+    "dbCollation": "SQL_Latvian_CI_AI",
+    "dbEdition": "Standard",
+    "searchName": "[concat('search', uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('webFarmName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "sku": {
+        "name": "[parameters('webFarmSkuName')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "webFarm"
+      },
+      "properties": {
+        "name": "[variables('webFarmName')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[variables('webApiName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('webFarmName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('documentsName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('dashboardName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', variables('webFarmName')))]": "Resource",
+        "displayName": "webApi"
+      },
+      "properties": {
+        "name": "[variables('webApiName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('webFarmName'))]"
+      },
+      "resources": [
+        {
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webApiName'))]"
+          ],
+          "tags": {
+            "displayName": "ConnectionStrings"
+          },
+          "properties": {
+            "AzureWebJobsDashboard": {
+              "type": "Custom",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('dashboardName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dashboardName')), '2016-01-01').keys[0].value, ';')]"
+            },
+            "AzureWebJobsStorage": {
+              "type": "Custom",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('documentsName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('documentsName')), '2016-01-01').keys[0].value, ';')]"
+            },
+            "DefaultConnectionString": {
+              "type": "SQLAzure",
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('dbserverName')), '2014-04-01-preview').fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('dbName'), ';User Id=', parameters('dbserverAdminLogin'), '@', reference(concat('Microsoft.Sql/servers/', variables('dbserverName')), '2014-04-01-preview').fullyQualifiedDomainName, ';Password=', parameters('dbserverAdminLoginPassword'), ';')]"
+            }
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webApiName'))]"
+          ],
+          "tags": {
+            "displayName": "appsettings"
+          },
+          "properties": {
+            "key1": "value1",
+            "key2": "value2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[variables('documentsName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[variables('documentsType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "documents"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('dashboardName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[variables('dashboardType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "dashboard"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('dbserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "dbserver"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('dbserverAdminLogin')]",
+        "administratorLoginPassword": "[parameters('dbserverAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('dbserverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[variables('dbName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('dbserverName'))]"
+          ],
+          "tags": {
+            "displayName": "db"
+          },
+          "properties": {
+            "collation": "[variables('dbCollation')]",
+            "edition": "[variables('dbEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('dbRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-08-19",
+      "name": "[variables('searchName')]",
+      "type": "Microsoft.Search/searchServices",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "free"
+      },
+      "tags": {
+        "displayName": "search"
+      },
+      "properties": {
+        "hostingMode": "Default",
+        "partitionCount": 1,
+        "replicaCount": 1
+      }
+    }
+  ],
+  "outputs": {}
+}

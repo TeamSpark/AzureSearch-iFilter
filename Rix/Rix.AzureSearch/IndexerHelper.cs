@@ -62,6 +62,7 @@ namespace Rix.AzureSearch
 			indexer.FieldMappings = new List<FieldMapping>();
 			indexer.FieldMappings.Add(fieldMappingContent);
 			indexer.FieldMappings.Add(fieldMappingId);
+            indexer.Schedule = new IndexingSchedule(TimeSpan.FromMinutes(5));
 
 			await ServiceClient.Indexers.CreateOrUpdateAsync(indexer);
 		}
